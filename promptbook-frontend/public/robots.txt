@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /cmd_sco
+Disallow: /admin
+Disallow: /cmd
+Disallow: /dashboard

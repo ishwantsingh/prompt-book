@@ -1,0 +1,312 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String         @id @default(cuid())
+  email            String         @unique
+  username         String         @unique
+  displayName      String?
+  avatarUrl        String?
+  bio              String?
+  reputationScore  Int            @default(0)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  actionsPerformed Activity[]     @relation("UserActions")
+  activities       Activity[]     @relation("UserActivities")
+  commentVotes     CommentVote[]
+  comments         Comment[]
+  prompts          Prompt[]
+  teamMemberships  TeamMember[]
+  ownedTeams       Team[]         @relation("TeamOwner")
+  favorites        UserFavorite[]
+  votes            Vote[]
+
+  @@map("users")
+}
+
+model Category {
+  id            String        @id @default(cuid())
+  name          String        @unique
+  slug          String        @unique
+  description   String?
+  icon          String?
+  color         String?
+  createdAt     DateTime      @default(now())
+  prompts       Prompt[]
+  subcategories Subcategory[]
+
+  @@map("categories")
+}
+
+model Subcategory {
+  id          String   @id @default(cuid())
+  categoryId  String
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  prompts     Prompt[]
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@map("subcategories")
+}
+
+model Tag {
+  id           String      @id @default(cuid())
+  name         String      @unique
+  slug         String      @unique
+  kind         TagKind     @default(topic)
+  isDeprecated Boolean     @default(false)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  prompts      PromptTag[]
+  aliases      TagAlias[]
+
+  @@index([kind])
+  @@map("tags")
+}
+
+model TagAlias {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  tagId     String
+  createdAt DateTime @default(now())
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@index([tagId])
+  @@map("tag_aliases")
+}
+
+model Prompt {
+  id              String                 @id @default(cuid())
+  title           String
+  content         String
+  description     String?
+  authorId        String
+  categoryId      String
+  upvotes         Int                    @default(0)
+  downvotes       Int                    @default(0)
+  usageCount      Int                    @default(0)
+  status          String                 @default("published")
+  isFeatured      Boolean                @default(false)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  subcategoryId   String?
+  slug            String                 @unique
+  bestScore       Float?
+  bestScoreSource String?
+  isSeed          Boolean                @default(false)
+  comments        Comment[]
+  scores          PromptScore[]
+  tags            PromptTag[]
+  author          User                   @relation(fields: [authorId], references: [id])
+  category        Category               @relation(fields: [categoryId], references: [id])
+  subcategory     Subcategory?           @relation(fields: [subcategoryId], references: [id])
+  teamCollections TeamCollectionPrompt[]
+  favorites       UserFavorite[]
+  votes           Vote[]
+
+  @@index([subcategoryId])
+  @@index([slug])
+  @@map("prompts")
+}
+
+model PromptTag {
+  promptId  String
+  tagId     String
+  isPrimary Boolean   @default(false)
+  source    TagSource @default(manual)
+  createdAt DateTime  @default(now())
+  prompt    Prompt    @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  tag       Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([promptId, tagId])
+  @@index([tagId, promptId])
+  @@index([promptId, isPrimary])
+  @@map("prompt_tags")
+}
+
+model Vote {
+  id        String   @id @default(cuid())
+  userId    String
+  promptId  String
+  voteType  String
+  createdAt DateTime @default(now())
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, promptId])
+  @@map("votes")
+}
+
+model Comment {
+  id        String        @id @default(cuid())
+  content   String
+  authorId  String
+  promptId  String
+  parentId  String?
+  upvotes   Int           @default(0)
+  downvotes Int           @default(0)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  votes     CommentVote[]
+  author    User          @relation(fields: [authorId], references: [id])
+  parent    Comment?      @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[]     @relation("CommentReplies")
+  prompt    Prompt        @relation(fields: [promptId], references: [id])
+
+  @@map("comments")
+}
+
+model CommentVote {
+  id        String   @id @default(cuid())
+  userId    String
+  commentId String
+  voteType  String
+  createdAt DateTime @default(now())
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, commentId])
+  @@map("comment_votes")
+}
+
+model UserFavorite {
+  userId    String
+  promptId  String
+  createdAt DateTime @default(now())
+  prompt    Prompt   @relation(fields: [promptId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@id([userId, promptId])
+  @@map("user_favorites")
+}
+
+model Activity {
+  id          String   @id @default(cuid())
+  userId      String
+  actorId     String
+  type        String
+  title       String
+  description String
+  data        Json
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  actor       User     @relation("UserActions", fields: [actorId], references: [id], onDelete: Cascade)
+  user        User     @relation("UserActivities", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([userId, isRead])
+  @@map("activities")
+}
+
+model PromptScore {
+  id                      String   @id @default(cuid())
+  promptId                String
+  source                  String
+  clarityStructure        Int
+  specificityContext      Int
+  adaptabilityReusability Int
+  efficiency              Int
+  creativityOriginality   Int
+  biasSafety              Int
+  goalAlignment           Int
+  finalScore              Float
+  createdAt               DateTime @default(now())
+  prompt                  Prompt   @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@index([promptId, createdAt(sort: Desc)])
+  @@map("prompt_scores")
+}
+
+model Team {
+  id          String           @id @default(cuid())
+  name        String
+  slug        String           @unique
+  description String?
+  isPublic    Boolean          @default(false)
+  ownerId     String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  collections TeamCollection[]
+  members     TeamMember[]
+  owner       User             @relation("TeamOwner", fields: [ownerId], references: [id])
+
+  @@index([slug])
+  @@index([isPublic])
+  @@map("teams")
+}
+
+model TeamMember {
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String
+  role     TeamRole @default(MEMBER)
+  joinedAt DateTime @default(now())
+  team     Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+  @@map("team_members")
+}
+
+model TeamCollection {
+  id          String                 @id @default(cuid())
+  teamId      String
+  name        String
+  description String?
+  isPublic    Boolean                @default(false)
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  prompts     TeamCollectionPrompt[]
+  team        Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId])
+  @@map("team_collections")
+}
+
+model TeamCollectionPrompt {
+  id               String         @id @default(cuid())
+  teamCollectionId String
+  promptId         String
+  addedAt          DateTime       @default(now())
+  addedBy          String
+  prompt           Prompt         @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  teamCollection   TeamCollection @relation(fields: [teamCollectionId], references: [id], onDelete: Cascade)
+
+  @@unique([teamCollectionId, promptId])
+  @@index([teamCollectionId])
+  @@index([promptId])
+  @@map("team_collection_prompts")
+}
+
+enum TagKind {
+  topic
+  audience
+  tone
+  format
+  industry
+  language
+}
+
+enum TagSource {
+  manual
+  auto_nlp
+  llm
+  migration
+  import
+}
+
+enum TeamRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
