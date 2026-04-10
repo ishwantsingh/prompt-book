@@ -30,14 +30,38 @@
 
 ## Features
 
-- Browse a structured prompt library with categories, subcategories, tags, search, and sorting.
-- Publish prompts with title, description, prompt content, and metadata.
-- Vote, comment, and save prompts for community-driven discovery.
-- Track prompt quality with stored score metadata and rank by best score.
-- Sign in with GitHub or Google using NextAuth.
-- Create teams and organize prompts into shared collections.
-- Keep user activity, notifications, favorites, and profile pages in one place.
-- Run a split frontend/backend architecture designed for independent deployment.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Structured discovery</strong><br />
+      Browse prompts by category, subcategory, tags, keyword search, popularity, recency, or score so useful prompts are easy to find.
+    </td>
+    <td width="50%" valign="top">
+      <strong>Publishing workflow</strong><br />
+      Create prompts with titles, descriptions, full prompt content, and metadata that make them reusable instead of disposable snippets.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Community quality signals</strong><br />
+      Combine votes, comments, favorites, and stored scoring data to surface prompts that are both useful and battle-tested.
+    </td>
+    <td width="50%" valign="top">
+      <strong>OAuth-based accounts</strong><br />
+      Sign in with GitHub or Google, maintain a profile, and keep your submissions, favorites, and activity tied to one account.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <strong>Team collaboration</strong><br />
+      Create teams, manage membership, and organize prompts into shared collections for internal curation and reuse.
+    </td>
+    <td width="50%" valign="top">
+      <strong>Split frontend and backend</strong><br />
+      Run the UI and API independently with Next.js, Prisma, PostgreSQL, and deployment-friendly environment isolation.
+    </td>
+  </tr>
+</table>
 
 ## Why Prompt Book
 
