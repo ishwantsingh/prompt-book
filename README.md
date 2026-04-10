@@ -11,6 +11,8 @@
 <p align="center">
   <a href="#features">Features</a>
   ·
+  <a href="https://www.promptbook.info/prompts">Live Demo</a>
+  ·
   <a href="#architecture">Architecture</a>
   ·
   <a href="#quick-start">Quick Start</a>
