@@ -30,6 +30,12 @@
   <img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="Apache 2.0 License" />
 </p>
 
+<p align="center">
+  <a href="https://www.promptbook.info/prompts">
+    <img src="assets/promptbook-screenshot.png" alt="Prompt Book app screenshot" width="1100" />
+  </a>
+</p>
+
 ## Features
 
 <table>
