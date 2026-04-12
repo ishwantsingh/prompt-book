@@ -178,7 +178,6 @@ export default function PromptsPage() {
         const promptsResponse = await apiFetch(apiUrl)
         if (promptsResponse.ok) {
           const promptsData = await promptsResponse.json()
-          console.log('Raw API response:', promptsData)
           if (promptsData.success && promptsData.data) {
             const dbPrompts = promptsData.data.map((p: any) => ({
               id: p.id,
@@ -201,7 +200,6 @@ export default function PromptsPage() {
               bestScore: p.bestScore,
               createdAt: p.createdAt,
             }))
-            console.log('Transformed prompts:', dbPrompts)
             setPrompts(dbPrompts)
             
             const uniqueCategories = dbPrompts.reduce((acc: any[], prompt: any) => {
@@ -240,7 +238,6 @@ export default function PromptsPage() {
   }, [session, prompts, loadSavedStatesAndVotes])
 
   const filteredAndSortedPrompts = useMemo(() => {
-    console.log('Prompts from API:', prompts)
     return prompts
   }, [prompts])
 
@@ -312,7 +309,6 @@ export default function PromptsPage() {
             }
           }))
         }
-        console.log('Vote successful')
       } else {
         setVoteStates(prev => ({
           ...prev,
@@ -336,7 +332,6 @@ export default function PromptsPage() {
           [promptId]: { upvotes: prompt.upvotes, downvotes: prompt.downvotes }
         }))
       }
-      console.log('Vote failed (demo mode)')
     }
   }
 
@@ -357,12 +352,8 @@ export default function PromptsPage() {
       const response = await apiFetch(`/api/prompts/${promptId}/favorite`, withUserHeader({
         method: isSaved ? 'DELETE' : 'POST'
       }, session.user.id))
-
-      if (response.ok) {
-        console.log('Save updated')
-      }
-    } catch (error) {
-      console.log('Save failed (demo mode)')
+      void response
+    } catch {
     }
   }
 
@@ -388,8 +379,7 @@ export default function PromptsPage() {
           [promptId]: comments
         }))
       }
-    } catch (error) {
-      console.log('Failed to load comments for prompt', promptId)
+    } catch {
       setPromptComments(prev => ({
         ...prev,
         [promptId]: []
@@ -435,8 +425,7 @@ export default function PromptsPage() {
         await navigator.clipboard.writeText(shareData.url)
         alert('Link copied to clipboard!')
       }
-    } catch (error) {
-      console.log('Share failed')
+    } catch {
     }
   }
 
