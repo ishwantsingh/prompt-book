@@ -1,6 +1,7 @@
-import { PrismaClient, PromptScore } from '@prisma/client'
+import { PromptScore } from '@prisma/client'
+import { db } from '@/lib/db'
 
-const prisma = new PrismaClient()
+const prisma = db
 
 export interface ScoringRubric {
   clarityStructure: number        // 0-20

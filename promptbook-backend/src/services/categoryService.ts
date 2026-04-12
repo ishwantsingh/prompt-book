@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import { db } from '@/lib/db'
 
-const prisma = new PrismaClient()
+const prisma = db
 
 export class CategoryService {
   async getCategoryWithSubcategories(categoryId: string) {
@@ -23,5 +23,4 @@ export class CategoryService {
 }
 
 export const categoryService = new CategoryService()
-
 

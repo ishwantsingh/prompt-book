@@ -1,8 +1,9 @@
-import { PrismaClient, Prompt } from '@prisma/client'
+import { Prompt } from '@prisma/client'
+import { db } from '@/lib/db'
 import { tagRepository, PromptTagData } from '../repositories/tagRepository'
 import { backgroundScoringService } from './backgroundScoringService'
 
-const prisma = new PrismaClient()
+const prisma = db
 
 export interface CreatePromptData {
   title: string

@@ -4,7 +4,6 @@ import {
   getAuthErrorResponse,
   requireAuthenticatedUser,
 } from '@/lib/request-auth'
-import { promptService } from '@/services/promptService'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -104,6 +103,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const { promptService } = await import('@/services/promptService')
     const user = await requireAuthenticatedUser(request)
     const userId = user.userId
 

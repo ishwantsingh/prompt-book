@@ -1,6 +1,7 @@
-import { PrismaClient, Tag, TagKind, TagSource } from '@prisma/client'
+import { Tag, TagKind, TagSource } from '@prisma/client'
+import { db } from '@/lib/db'
 
-const prisma = new PrismaClient()
+const prisma = db
 
 export interface CreateTagData {
   name: string

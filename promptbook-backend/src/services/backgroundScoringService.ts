@@ -1,7 +1,7 @@
 import { promptScoringService, ScoringResult } from './promptScoringService'
-import { PrismaClient } from '@prisma/client'
+import { db } from '@/lib/db'
 
-const prisma = new PrismaClient()
+const prisma = db
 
 export interface ScoringJob {
   id: string
