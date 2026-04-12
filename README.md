@@ -179,6 +179,7 @@ Important:
 - `DATABASE_URL` should be the pooled runtime connection string used by the backend app.
 - `DIRECT_URL` should be the direct non-pooled PostgreSQL connection string used by Prisma CLI commands.
 - In local development without a pooler, `DATABASE_URL` and `DIRECT_URL` can point to the same PostgreSQL instance.
+- The backend also auto-adds `pgbouncer=true&connection_limit=1` at runtime when `DATABASE_URL` looks like a pooled Postgres URL such as a `pooler` host or a pooler port like `6543`.
 
 ### 3. Initialize the database
 
@@ -259,6 +260,7 @@ npx prisma studio
 - Set `DATABASE_URL` to the pooled runtime connection string for the deployed backend.
 - Set `DIRECT_URL` to the direct non-pooled connection string for Prisma CLI operations such as `migrate deploy`, `db push`, and `studio`.
 - If you use a PgBouncer or Supabase pooler, default to a runtime `DATABASE_URL` that includes `pgbouncer=true&connection_limit=1`.
+- The backend runtime also normalizes likely pooled URLs so a missing `pgbouncer=true` on a `pooler` host or pooler port does not fall back to prepared statements.
 - Redeploy the backend after changing database connection environment variables.
 - Add `ADMIN_USER_EMAILS` or `ADMIN_USER_IDS` if you need admin-only backend routes.
 
