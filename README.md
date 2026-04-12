@@ -255,6 +255,7 @@ npx prisma studio
 - Deploy `promptbook-frontend` and `promptbook-backend` as separate apps.
 - Point `NEXT_PUBLIC_API_BASE_URL` at the deployed backend.
 - Set `CORS_ORIGINS` on the backend to your deployed frontend origin.
+- For the current production setup, include both `https://www.promptbook.info` and `https://promptbook.info` if you serve both.
 - Use the same `NEXTAUTH_SECRET` in both apps.
 - Provision PostgreSQL or Supabase for the backend database.
 - Set `DATABASE_URL` to the pooled runtime connection string for the deployed backend.

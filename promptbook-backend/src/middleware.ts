@@ -5,6 +5,11 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'http://127.0.0.1:3000',
   'http://localhost:3001',
   'http://127.0.0.1:3001',
+  'https://www.promptbook.info',
+  'https://promptbook.info',
+  'https://prompt-book-frontend.vercel.app',
+  'https://prompt-book-frontend-ishwantsinghs-projects.vercel.app',
+  'https://prompt-book-frontend-git-main-ishwantsinghs-projects.vercel.app',
 ]
 
 function getAllowedOrigins(): Set<string> {
@@ -13,9 +18,7 @@ function getAllowedOrigins(): Set<string> {
     .map((origin) => origin.trim())
     .filter(Boolean)
 
-  return new Set(
-    configuredOrigins.length > 0 ? configuredOrigins : DEFAULT_ALLOWED_ORIGINS
-  )
+  return new Set([...DEFAULT_ALLOWED_ORIGINS, ...configuredOrigins])
 }
 
 export function middleware(request: NextRequest) {
